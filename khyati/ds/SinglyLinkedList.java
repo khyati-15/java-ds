@@ -1,5 +1,5 @@
 package khyati.ds;
-public class SinglyLinkedList<E> 
+public class SinglyLinkedList<E extends Comparable<E>> 
 {
   //---------------- nested Node class ----------------
   /**
@@ -7,7 +7,7 @@ public class SinglyLinkedList<E>
    * element and to the subsequent node in the list (or null if this
    * is the last node).
    */
-  private static class Node<E> 
+  private static class Node<E extends Comparable<E>>
   {
     /** The element stored at this node */
     private E element;            // reference to the element stored at this node
@@ -36,7 +36,10 @@ public class SinglyLinkedList<E>
     { 
       return element; 
     }
-
+	
+	public void setElement(E val){
+		element=val;
+	}
     /**
      * Returns the node that follows this one (or null if no such node).
      * @return the following node
@@ -49,6 +52,8 @@ public class SinglyLinkedList<E>
      * @param n    the node that should follow this one
      */
     public void setNext(Node<E> n) { next = n; }
+	
+	
   } //----------- end of nested Node class -----------
 
 
@@ -141,8 +146,6 @@ public class SinglyLinkedList<E>
       tail = null;                           // special case as list is now empty
     return answer;
   }
-
-
   /**
    * Produces a string representation of the contents of the list.
    * This exists for debugging purposes only.
@@ -159,4 +162,137 @@ public class SinglyLinkedList<E>
     sb.append(")");
     return sb.toString();
   }
+  
+  public void reverse(){
+  tail=head;
+  head=reverse(head);
+  }
+  
+  private Node reverse(Node node){
+  	if(node.getNext()==null || node==null){
+  		return node;
+  	}
+	Node newnode=reverse(node.getNext());
+	node.getNext().setNext(node);
+	node.setNext(null);
+	return newnode;
+  }
+  
+  public E findMiddle(){
+  	Node<E> slowptr=head;
+	Node<E> fastptr=head;
+	if(head!=null){
+		while(fastptr!=null && fastptr.getNext()!=null ){
+		fastptr=fastptr.getNext().getNext();
+		slowptr=slowptr.getNext();
+		}
+		return slowptr.getElement();
+	}
+	else
+	return null;
+  }
+  
+  public E findNthLast(int n){
+  	if(size<n)
+  		return null;
+	else if(head==null)
+		return null;
+	else{
+		Node<E> mainptr=head;
+		Node<E> refptr=head;
+		int count=0;
+		while(count<n){
+			refptr=refptr.getNext();
+			count++;
+		}
+		
+		while(refptr!=null){
+			mainptr=mainptr.getNext();
+			refptr=refptr.getNext();
+		}
+	return mainptr.getElement();
+	}
+  
+  }
+  
+  public boolean isPalindrome(){
+  boolean result=checkPal(head);
+  return result;
+  }
+  Node<E> left=null;
+  private boolean checkPal(Node ryt){
+ 	left=head;
+  if(ryt==null)
+  return true;
+  boolean res=checkPal(ryt.getNext());
+  if(res==false)
+  return false;
+  boolean com=(ryt.getElement()==left.getElement());
+  left=left.getNext();
+  return com;
+  }
+  
+  private void removeLoop(Node<E> node){
+  	Node<E> ptr1=head;
+	Node<E> ptr2;
+	while(true){
+		ptr2=node;
+		while(ptr2.getNext()!=node && ptr2.getNext()!=ptr1)
+  			ptr2.getNext();
+  		if(ptr2.getNext()==ptr1)
+  			break;
+  		ptr1=ptr1.getNext();
+	}
+	ptr2.setNext(null);
+  }
+  
+  public boolean DetectandRemoveLoop(){
+  	Node<E> slow=head;
+  	Node<E> fast=head;
+	while(slow!=null && fast!=null && fast.getNext()!=null){
+  		fast=fast.getNext().getNext();
+  		slow=slow.getNext();
+		if(fast==slow)
+			break;
+	}
+	
+	if(slow!=fast)
+		return false;
+	slow=head;
+	while(slow!=fast){
+		slow=slow.getNext();
+		fast=fast.getNext();
+	}
+	removeLoop(fast);
+	return true;
+  }
+  
+  public void addFirstLast(){
+  addFirstLast(head,head);
+  }
+  
+  private Node<E> temp=null;
+  private void addFirstLast(Node<E> slow,Node<E> fast){
+  	if(fast==null){
+		temp=slow;
+		return;
+	}
+	if(fast.getNext()==null){
+		temp=slow.getNext();
+		return;
+	}
+	
+	addFirstLast(slow.getNext(),fast.getNext().getNext());
+	E val=slow.getElement();
+	E val1=temp.getElement();
+	if(val instanceof Integer && val1 instanceof Integer){
+	val+=val1;
+	val1=val;
+	}
+	slow.setElement(val);
+	temp.setElement(val1);
+	
+	
+  }
+  
 }
