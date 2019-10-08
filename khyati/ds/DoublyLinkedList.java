@@ -231,4 +231,17 @@ size++;
     sb.append(")");
     return sb.toString();
   }
+  
+  public void reverse(){
+  Node<E> temp=null;
+  Node<E> current=header;
+  while(current!=null){
+  temp=current.getPrev();
+  current.setPrev(current.getNext());
+  current.setNext(temp);
+  current=current.getPrev();
+  }
+  if(temp!=null)
+  header=temp.getPrev();
+  }
 } //----------- end of DoublyLinkedList class -----------
